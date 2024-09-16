@@ -4,31 +4,30 @@ import { fetchRecipes } from "../api";
 import RecipeCard from "../components/RecipeCard";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const HomeScreen = ({ navigation }) => {
-  const [featuredRecipes, setFeaturedRecipes] = useState([]);
-  const [loadingFeatured, setLoadingFeatured] = useState(true);
-  const [query, setQuery] = useState("");
+const SearchResultsScreen = ({ route, navigation }) => {
+  const { query } = route.params;
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState(query);
 
   useEffect(() => {
-    const loadFeaturedRecipes = async () => {
+    const searchRecipes = async () => {
+      setLoading(true);
       try {
-        const randomQuery = "random";
-        const data = await fetchRecipes(randomQuery);
-        const randomRecipes = data.hits
-          .sort(() => 0.5 - Math.random())
-          .slice(0, 5);
-        setFeaturedRecipes(randomRecipes);
+        const data = await fetchRecipes(searchQuery);
+        setRecipes(data.hits);
       } catch (error) {
-        console.error("Erro:", error);
+        console.error("Error fetching recipes:", error);
       } finally {
-        setLoadingFeatured(false);
+        setLoading(false);
       }
     };
-    loadFeaturedRecipes();
-  }, []);
+
+    searchRecipes();
+  }, [searchQuery]);
 
   const handleSearch = () => {
-    navigation.navigate("SearchResults", { query });
+    navigation.navigate("SearchResults", { query: searchQuery });
   };
 
   return (
@@ -36,8 +35,8 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Pesquisar receitas"
-          value={query}
-          onChangeText={setQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           style={styles.searchInput}
         />
         <Ionicons
@@ -48,12 +47,11 @@ const HomeScreen = ({ navigation }) => {
           onPress={handleSearch}
         />
       </View>
-      <Text style={styles.title}>Receitas em destaque</Text>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {loadingFeatured ? (
-          <Text>Carregando...</Text>
+        {loading ? (
+          <Text>Loading...</Text>
         ) : (
-          featuredRecipes.map((item) => (
+          recipes.map((item) => (
             <RecipeCard
               key={item.recipe.uri}
               recipe={item.recipe}
@@ -91,11 +89,6 @@ const styles = StyleSheet.create({
   searchIcon: {
     padding: 10,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-  },
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -103,4 +96,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default SearchResultsScreen;

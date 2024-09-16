@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, Button, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Button,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const RecipeDetailScreen = ({ route }) => {
+const RecipeDetailScreen = ({ route, navigation }) => {
   const { recipe } = route.params;
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -48,29 +56,101 @@ const RecipeDetailScreen = ({ route }) => {
 
   if (!recipe) {
     return (
-      <View>
-        <Text>Receita não encontrada!</Text>
+      <View style={styles.container}>
+        <Text>Receita não encontrada :&#40;</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView>
-      <Text>{recipe.label}</Text>
-      <Image
-        source={{ uri: recipe.image }}
-        style={{ width: "100%", height: 200 }}
-      />
-      <Text>Ingredientes:</Text>
-      {recipe.ingredientLines.map((ingredient, index) => (
-        <Text key={index}>{ingredient}</Text>
-      ))}
-      <Button
-        title={isFavorite ? "Remover dos Favoritos" : "Adicionar aos Favoritos"}
-        onPress={toggleFavorite}
-      />
+    <ScrollView style={styles.container}>
+      <View style={styles.recipeHeader}>
+        <Image source={{ uri: recipe.image }} style={styles.image} />
+        <View style={styles.recipeDetails}>
+          <Text style={styles.title}>{recipe.label}</Text>
+          {recipe.cuisineType && (
+            <Text style={styles.info}>
+              Cuisine: {recipe.cuisineType.join(", ")}
+            </Text>
+          )}
+          {recipe.calories && (
+            <Text style={styles.info}>
+              Calories: {Math.round(recipe.calories)}
+            </Text>
+          )}
+          {recipe.ingredientLines && (
+            <Text style={styles.info}>
+              Ingredients: {recipe.ingredientLines.length}
+            </Text>
+          )}
+        </View>
+      </View>
+      <View style={styles.ingredientsContainer}>
+        <Text style={styles.subtitle}>Ingredients:</Text>
+        {recipe.ingredientLines.map((ingredient, index) => (
+          <Text key={index} style={styles.ingredient}>
+            {ingredient}
+          </Text>
+        ))}
+      </View>
+      <View style={styles.favoritesButtonContainer}>
+        <Button
+          title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          onPress={toggleFavorite}
+          color="#fb7d00"
+        />
+      </View>
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#ffb703",
+  },
+  recipeHeader: {
+    flexDirection: "row",
+    marginBottom: 24,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 16,
+  },
+  recipeDetails: {
+    marginLeft: 16,
+    justifyContent: "center",
+    flex: 1,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  info: {
+    fontSize: 16,
+    marginBottom: 4,
+    color: "#666",
+  },
+  ingredientsContainer: {
+    marginTop: 16,
+  },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  ingredient: {
+    fontSize: 16,
+    marginBottom: 4,
+    color: "#333",
+  },
+  favoritesButtonContainer: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+});
 
 export default RecipeDetailScreen;
