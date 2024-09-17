@@ -6,7 +6,6 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
-  Button,
   CheckBox,
   TouchableOpacity,
 } from "react-native";
@@ -37,14 +36,23 @@ const SearchResultsScreen = ({ route, navigation }) => {
     "peanut-free",
     "soy-free",
   ];
+
+  const healthFilterLabels = {
+    vegan: "Vegano",
+    vegetarian: "Vegetariano",
+    "dairy-free": "Sem derivados de leite",
+    DASH: "Dieta DASH",
+    "gluten-free": "Sem glúten",
+    paleo: "Dieta Paleo",
+    "peanut-free": "Sem amendoim",
+    "soy-free": "Sem soja",
+  };
+
   const cuisineTypeOptions = [
     "American",
     "Asian",
-    "British",
     "Caribbean",
-    "Central Europe",
     "Chinese",
-    "Eastern Europe",
     "French",
     "Indian",
     "Italian",
@@ -52,11 +60,25 @@ const SearchResultsScreen = ({ route, navigation }) => {
     "Kosher",
     "Mediterranean",
     "Mexican",
-    "Middle Eastern",
     "Nordic",
     "South American",
-    "South East Asian",
   ];
+
+  const cuisineTypeLabels = {
+    American: "Americana",
+    Asian: "Asiática",
+    Caribbean: "Caribenha",
+    Chinese: "Chinesa",
+    French: "Francesa",
+    Indian: "Indiana",
+    Italian: "Italiana",
+    Japanese: "Japonesa",
+    Kosher: "Kosher",
+    Mediterranean: "Mediterrânea",
+    Mexican: "Mexicana",
+    Nordic: "Nórdica",
+    "South American": "Sul-americana",
+  };
 
   useEffect(() => {
     const searchRecipes = async () => {
@@ -118,7 +140,12 @@ const SearchResultsScreen = ({ route, navigation }) => {
     ...Object.keys(currentCuisineTypeFilters).filter(
       (filter) => currentCuisineTypeFilters[filter]
     ),
-  ].join(", ");
+  ]
+    .map(
+      (filter) =>
+        healthFilterLabels[filter] || cuisineTypeLabels[filter] || filter
+    )
+    .join(", ");
 
   return (
     <View style={styles.container}>
@@ -176,7 +203,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
             <Text style={styles.modalTitle}>Filtros de busca</Text>
 
             <ScrollView style={styles.modalScrollView}>
-              <Text style={styles.filterLabel}>Health:</Text>
+              <Text style={styles.filterLabel}>Restrições:</Text>
               {healthFilterOptions.map((filter) => (
                 <View key={filter} style={styles.checkboxContainer}>
                   <CheckBox
@@ -184,19 +211,21 @@ const SearchResultsScreen = ({ route, navigation }) => {
                     onValueChange={() => toggleHealthFilter(filter)}
                   />
                   <Text style={styles.filterText}>
-                    {filter.replace("-", " ")}
+                    {healthFilterLabels[filter] || filter.replace("-", " ")}
                   </Text>
                 </View>
               ))}
 
-              <Text style={styles.filterLabel}>Cuisine Type:</Text>
+              <Text style={styles.filterLabel}>Culinária:</Text>
               {cuisineTypeOptions.map((type) => (
                 <View key={type} style={styles.checkboxContainer}>
                   <CheckBox
                     value={!!currentCuisineTypeFilters[type]}
                     onValueChange={() => toggleCuisineTypeFilter(type)}
                   />
-                  <Text style={styles.filterText}>{type}</Text>
+                  <Text style={styles.filterText}>
+                    {cuisineTypeLabels[type] || type}
+                  </Text>
                 </View>
               ))}
             </ScrollView>

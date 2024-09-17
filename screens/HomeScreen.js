@@ -30,6 +30,17 @@ const HomeScreen = ({ navigation }) => {
     "soy-free": false,
   });
 
+  const healthFilterLabels = {
+    vegan: "Vegano",
+    vegetarian: "Vegetariano",
+    "dairy-free": "Sem derivados de leite",
+    DASH: "Dieta DASH",
+    "gluten-free": "Sem glúten",
+    paleo: "Dieta Paleo",
+    "peanut-free": "Sem amendoim",
+    "soy-free": "Sem soja",
+  };
+
   const cuisineTypeOptions = [
     "American",
     "Asian",
@@ -45,6 +56,22 @@ const HomeScreen = ({ navigation }) => {
     "Nordic",
     "South American",
   ];
+
+  const cuisineTypeLabels = {
+    American: "Americana",
+    Asian: "Asiática",
+    Caribbean: "Caribenha",
+    Chinese: "Chinesa",
+    French: "Francesa",
+    Indian: "Indiana",
+    Italian: "Italiana",
+    Japanese: "Japonesa",
+    Kosher: "Kosher",
+    Mediterranean: "Mediterrânea",
+    Mexican: "Mexicana",
+    Nordic: "Nórdica",
+    "South American": "Sul-americana",
+  };
 
   const [cuisineTypeFilters, setCuisineTypeFilters] = useState(
     cuisineTypeOptions.reduce(
@@ -160,7 +187,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.modalTitle}>Filtros de busca</Text>
 
             <ScrollView style={styles.modalScrollView}>
-              <Text style={styles.filterLabel}>Health:</Text>
+              <Text style={styles.filterLabel}>Restrições:</Text>
               {Object.keys(healthFilters).map((filter) => (
                 <View key={filter} style={styles.checkboxContainer}>
                   <CheckBox
@@ -168,19 +195,21 @@ const HomeScreen = ({ navigation }) => {
                     onValueChange={() => toggleHealthFilter(filter)}
                   />
                   <Text style={styles.filterText}>
-                    {filter.replace("-", " ")}
+                    {healthFilterLabels[filter] || filter}
                   </Text>
                 </View>
               ))}
 
-              <Text style={styles.filterLabel}>Cuisine Type:</Text>
+              <Text style={styles.filterLabel}>Culinária:</Text>
               {cuisineTypeOptions.map((type) => (
                 <View key={type} style={styles.checkboxContainer}>
                   <CheckBox
                     value={cuisineTypeFilters[type]}
                     onValueChange={() => toggleCuisineTypeFilter(type)}
                   />
-                  <Text style={styles.filterText}>{type}</Text>
+                  <Text style={styles.filterText}>
+                    {cuisineTypeLabels[type] || type}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
