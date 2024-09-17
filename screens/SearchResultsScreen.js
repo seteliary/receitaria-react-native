@@ -73,12 +73,21 @@ const SearchResultsScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(query);
   const [modalVisible, setModalVisible] = useState(false);
+
+  // Estados para filtros atuais e filtros temporários
   const [currentHealthFilters, setCurrentHealthFilters] = useState(
     healthFilters.reduce((acc, filter) => ({ ...acc, [filter]: true }), {})
   );
   const [currentCuisineTypeFilters, setCurrentCuisineTypeFilters] = useState(
     cuisineTypeFilters.reduce((acc, filter) => ({ ...acc, [filter]: true }), {})
   );
+
+  const [tempHealthFilters, setTempHealthFilters] = useState({
+    ...currentHealthFilters,
+  });
+  const [tempCuisineTypeFilters, setTempCuisineTypeFilters] = useState({
+    ...currentCuisineTypeFilters,
+  });
 
   useEffect(() => {
     const searchRecipes = async () => {
@@ -114,17 +123,23 @@ const SearchResultsScreen = ({ route, navigation }) => {
   const closeFilterModal = () => setModalVisible(false);
 
   const toggleHealthFilter = (filter) => {
-    setCurrentHealthFilters((prevState) => ({
+    setTempHealthFilters((prevState) => ({
       ...prevState,
       [filter]: !prevState[filter],
     }));
   };
 
   const toggleCuisineTypeFilter = (filter) => {
-    setCurrentCuisineTypeFilters((prevState) => ({
+    setTempCuisineTypeFilters((prevState) => ({
       ...prevState,
       [filter]: !prevState[filter],
     }));
+  };
+
+  const applyFilters = () => {
+    setCurrentHealthFilters(tempHealthFilters);
+    setCurrentCuisineTypeFilters(tempCuisineTypeFilters);
+    closeFilterModal(); // Fechar o modal após aplicar filtros
   };
 
   const appliedFilters = [
@@ -209,7 +224,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
               {healthFilterOptions.map((filter) => (
                 <View key={filter} style={styles.checkboxContainer}>
                   <CheckBox
-                    value={!!currentHealthFilters[filter]}
+                    value={!!tempHealthFilters[filter]}
                     onValueChange={() => toggleHealthFilter(filter)}
                   />
                   <Text style={styles.filterText}>
@@ -222,7 +237,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
               {cuisineTypeOptions.map((type) => (
                 <View key={type} style={styles.checkboxContainer}>
                   <CheckBox
-                    value={!!currentCuisineTypeFilters[type]}
+                    value={!!tempCuisineTypeFilters[type]}
                     onValueChange={() => toggleCuisineTypeFilter(type)}
                   />
                   <Text style={styles.filterText}>
@@ -232,10 +247,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
               ))}
             </ScrollView>
 
-            <TouchableOpacity
-              onPress={closeFilterModal}
-              style={styles.applyButton}
-            >
+            <TouchableOpacity onPress={applyFilters} style={styles.applyButton}>
               <Text style={styles.applyButtonText}>Aplicar</Text>
             </TouchableOpacity>
           </View>
