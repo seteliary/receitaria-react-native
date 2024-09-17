@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RecipeCard from "../components/RecipeCard"; // Atualize o caminho se necessário
+import RecipeCard from "../components/RecipeCard";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const FavoriteRecipesScreen = ({ navigation }) => {
@@ -14,7 +14,6 @@ const FavoriteRecipesScreen = ({ navigation }) => {
         if (favorites) {
           const favoriteRecipes = JSON.parse(favorites);
 
-          // Filtrar receitas vazias, nulas ou inválidas
           const filteredRecipes = favoriteRecipes.filter(
             (recipe) => recipe && recipe.uri && recipe.label && recipe.image
           );
@@ -22,7 +21,7 @@ const FavoriteRecipesScreen = ({ navigation }) => {
           setFavoriteRecipes(filteredRecipes);
         }
       } catch (error) {
-        console.error("Error loading favorites:", error);
+        console.error("Erro:", error);
       }
     };
 
@@ -33,7 +32,7 @@ const FavoriteRecipesScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Ionicons
-          name="star"
+          name="heart"
           size={24}
           color="white"
           onPress={() => navigation.navigate("Favorites")}
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingVertical: 16,
-    backgroundColor: "#ffb703", // Fundo da página
+    backgroundColor: "#ffb703",
   },
   header: {
     flexDirection: "row",
@@ -76,6 +75,7 @@ const styles = StyleSheet.create({
   },
   favoritesButton: {
     padding: 10,
+    paddingLeft: 0,
   },
   cardsContainer: {
     flexDirection: "row",

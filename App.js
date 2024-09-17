@@ -24,7 +24,7 @@ export default function App() {
           options={({ navigation }) => ({
             headerRight: () => (
               <Ionicons
-                name="star"
+                name="heart"
                 size={24}
                 color="white"
                 style={{ marginRight: 15 }}
@@ -49,7 +49,7 @@ export default function App() {
           options={({ navigation }) => ({
             headerRight: () => (
               <Ionicons
-                name="star"
+                name="heart"
                 size={24}
                 color="white"
                 style={{ marginRight: 15 }}
@@ -74,7 +74,7 @@ export default function App() {
           options={({ navigation }) => ({
             headerRight: () => (
               <Ionicons
-                name="star"
+                name="heart"
                 size={24}
                 color="white"
                 style={{ marginRight: 15 }}
@@ -99,7 +99,7 @@ export default function App() {
           options={({ navigation }) => ({
             headerRight: () => (
               <Ionicons
-                name="star"
+                name="heart"
                 size={24}
                 color="white"
                 style={{ marginRight: 15 }}

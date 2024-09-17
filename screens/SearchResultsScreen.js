@@ -1,20 +1,78 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  ScrollView,
+  Modal,
+  Button,
+  CheckBox,
+  TouchableOpacity,
+} from "react-native";
 import { fetchRecipes } from "../api";
 import RecipeCard from "../components/RecipeCard";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const SearchResultsScreen = ({ route, navigation }) => {
-  const { query } = route.params;
+  const { query, healthFilters, cuisineTypeFilters } = route.params;
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(query);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentHealthFilters, setCurrentHealthFilters] = useState(
+    healthFilters.reduce((acc, filter) => ({ ...acc, [filter]: true }), {})
+  );
+  const [currentCuisineTypeFilters, setCurrentCuisineTypeFilters] = useState(
+    cuisineTypeFilters.reduce((acc, filter) => ({ ...acc, [filter]: true }), {})
+  );
+
+  const healthFilterOptions = [
+    "vegan",
+    "vegetarian",
+    "dairy-free",
+    "DASH",
+    "gluten-free",
+    "paleo",
+    "peanut-free",
+    "soy-free",
+  ];
+  const cuisineTypeOptions = [
+    "American",
+    "Asian",
+    "British",
+    "Caribbean",
+    "Central Europe",
+    "Chinese",
+    "Eastern Europe",
+    "French",
+    "Indian",
+    "Italian",
+    "Japanese",
+    "Kosher",
+    "Mediterranean",
+    "Mexican",
+    "Middle Eastern",
+    "Nordic",
+    "South American",
+    "South East Asian",
+  ];
 
   useEffect(() => {
     const searchRecipes = async () => {
       setLoading(true);
       try {
-        const data = await fetchRecipes(searchQuery);
+        const healthFiltersList = Object.keys(currentHealthFilters).filter(
+          (filter) => currentHealthFilters[filter]
+        );
+        const cuisineTypeFiltersList = Object.keys(
+          currentCuisineTypeFilters
+        ).filter((filter) => currentCuisineTypeFilters[filter]);
+        const data = await fetchRecipes(
+          searchQuery,
+          healthFiltersList,
+          cuisineTypeFiltersList
+        );
         setRecipes(data.hits);
       } catch (error) {
         console.error("Erro:", error);
@@ -24,11 +82,43 @@ const SearchResultsScreen = ({ route, navigation }) => {
     };
 
     searchRecipes();
-  }, [searchQuery]);
+  }, [searchQuery, currentHealthFilters, currentCuisineTypeFilters]);
 
   const handleSearch = () => {
-    navigation.navigate("SearchResults", { query: searchQuery });
+    setSearchQuery(searchQuery);
   };
+
+  const openFilterModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeFilterModal = () => {
+    setModalVisible(false);
+  };
+
+  const toggleHealthFilter = (filter) => {
+    setCurrentHealthFilters((prevState) => ({
+      ...prevState,
+      [filter]: !prevState[filter],
+    }));
+  };
+
+  const toggleCuisineTypeFilter = (filter) => {
+    setCurrentCuisineTypeFilters((prevState) => ({
+      ...prevState,
+      [filter]: !prevState[filter],
+    }));
+  };
+
+  // Generate text for applied filters
+  const appliedFilters = [
+    ...Object.keys(currentHealthFilters).filter(
+      (filter) => currentHealthFilters[filter]
+    ),
+    ...Object.keys(currentCuisineTypeFilters).filter(
+      (filter) => currentCuisineTypeFilters[filter]
+    ),
+  ].join(", ");
 
   return (
     <View style={styles.container}>
@@ -46,23 +136,80 @@ const SearchResultsScreen = ({ route, navigation }) => {
           style={styles.searchIcon}
           onPress={handleSearch}
         />
+        <Ionicons
+          name="filter"
+          size={20}
+          color="gray"
+          style={styles.filterIcon}
+          onPress={openFilterModal}
+        />
       </View>
-      <Text style={styles.title}>Resultados da busca</Text>
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {loading ? (
-          <Text>Carregando...</Text>
-        ) : (
-          recipes.map((item) => (
-            <RecipeCard
-              key={item.recipe.uri}
-              recipe={item.recipe}
-              onPress={() =>
-                navigation.navigate("RecipeDetail", { recipe: item.recipe })
-              }
-            />
-          ))
-        )}
-      </ScrollView>
+
+      <Text style={styles.title}>Resultados da Pesquisa</Text>
+      <Text style={styles.appliedFiltersText}>
+        Filtro(s) aplicado(s): {appliedFilters || "Nenhum"}
+      </Text>
+
+      {loading ? (
+        <Text>Carregando...</Text>
+      ) : (
+        <ScrollView contentContainerStyle={styles.cardsContainer}>
+          {recipes.length > 0 ? (
+            recipes.map((item) => (
+              <RecipeCard
+                key={item.recipe.uri}
+                recipe={item.recipe}
+                onPress={() =>
+                  navigation.navigate("RecipeDetail", { recipe: item.recipe })
+                }
+              />
+            ))
+          ) : (
+            <Text>Nenhum resultado encontrado.</Text>
+          )}
+        </ScrollView>
+      )}
+
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Filtros de busca</Text>
+
+            <ScrollView style={styles.modalScrollView}>
+              <Text style={styles.filterLabel}>Health:</Text>
+              {healthFilterOptions.map((filter) => (
+                <View key={filter} style={styles.checkboxContainer}>
+                  <CheckBox
+                    value={!!currentHealthFilters[filter]}
+                    onValueChange={() => toggleHealthFilter(filter)}
+                  />
+                  <Text style={styles.filterText}>
+                    {filter.replace("-", " ")}
+                  </Text>
+                </View>
+              ))}
+
+              <Text style={styles.filterLabel}>Cuisine Type:</Text>
+              {cuisineTypeOptions.map((type) => (
+                <View key={type} style={styles.checkboxContainer}>
+                  <CheckBox
+                    value={!!currentCuisineTypeFilters[type]}
+                    onValueChange={() => toggleCuisineTypeFilter(type)}
+                  />
+                  <Text style={styles.filterText}>{type}</Text>
+                </View>
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={closeFilterModal}
+              style={styles.applyButton}
+            >
+              <Text style={styles.applyButtonText}>Aplicar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -73,31 +220,88 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: "#ffb703",
   },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    backgroundColor: "#fff",
+    borderRadius: 999,
+    paddingHorizontal: 8,
+  },
+  searchInput: {
+    flex: 1,
+    padding: 12,
+  },
+  searchIcon: {
+    padding: 10,
+  },
+  filterIcon: {
+    padding: 10,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
+    marginBottom: 16,
+  },
+  appliedFiltersText: {
+    fontSize: 16,
+    color: "#fff",
     marginBottom: 24,
-  },
-  searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 24,
-    backgroundColor: "#fff",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-  },
-  searchInput: {
-    flex: 1,
-    padding: 10,
-  },
-  searchIcon: {
-    padding: 10,
   },
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 24,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    marginHorizontal: 20,
+    borderRadius: 16,
+    maxHeight: "70%",
+    width: "60%",
+  },
+  modalScrollView: {
+    // maxHeight: "70%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    padding: 20,
+  },
+  filterLabel: {
+    fontSize: 16,
+    marginVertical: 10,
+    paddingHorizontal: 20,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingHorizontal: 20,
+  },
+  filterText: {
+    fontSize: 16,
+    marginLeft: 8,
+  },
+  applyButton: {
+    backgroundColor: "#ffb703",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+    alignItems: "center",
+    margin: 20,
+  },
+  applyButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
