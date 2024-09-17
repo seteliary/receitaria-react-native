@@ -139,7 +139,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
   const applyFilters = () => {
     setCurrentHealthFilters(tempHealthFilters);
     setCurrentCuisineTypeFilters(tempCuisineTypeFilters);
-    closeFilterModal(); // Fechar o modal após aplicar filtros
+    closeFilterModal();
   };
 
   const appliedFilters = [

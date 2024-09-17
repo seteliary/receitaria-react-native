@@ -38,9 +38,9 @@ export default function App() {
               />
             ),
             headerStyle: {
-              backgroundColor: "#fb7d00", // Cor de fundo da AppBar
+              backgroundColor: "#fb7d00",
             },
-            headerTintColor: "#fff", // Cor do texto e ícones da AppBar
+            headerTintColor: "#fff",
           })}
         />
         <Stack.Screen
@@ -63,9 +63,9 @@ export default function App() {
               />
             ),
             headerStyle: {
-              backgroundColor: "#fb7d00", // Cor de fundo da AppBar
+              backgroundColor: "#fb7d00",
             },
-            headerTintColor: "#fff", // Cor do texto e ícones da AppBar
+            headerTintColor: "#fff",
           })}
         />
         <Stack.Screen
@@ -88,9 +88,9 @@ export default function App() {
               />
             ),
             headerStyle: {
-              backgroundColor: "#fb7d00", // Cor de fundo da AppBar
+              backgroundColor: "#fb7d00",
             },
-            headerTintColor: "#fff", // Cor do texto e ícones da AppBar
+            headerTintColor: "#fff",
           })}
         />
         <Stack.Screen
@@ -113,9 +113,9 @@ export default function App() {
               />
             ),
             headerStyle: {
-              backgroundColor: "#fb7d00", // Cor de fundo da AppBar
+              backgroundColor: "#fb7d00",
             },
-            headerTintColor: "#fff", // Cor do texto e ícones da AppBar
+            headerTintColor: "#fff",
           })}
         />
       </Stack.Navigator>

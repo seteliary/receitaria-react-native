@@ -21,7 +21,7 @@ const RecipeDetailScreen = ({ route }) => {
         const favoriteRecipes = favorites ? JSON.parse(favorites) : [];
         setIsFavorite(favoriteRecipes.some((fav) => fav.uri === recipe.uri));
       } catch (error) {
-        console.error("Failed to check favorites:", error);
+        console.error(error);
       }
     };
     checkFavorite();
@@ -32,14 +32,25 @@ const RecipeDetailScreen = ({ route }) => {
       const favorites = await AsyncStorage.getItem("favorites");
       const favoriteRecipes = favorites ? JSON.parse(favorites) : [];
 
-      const updatedFavorites = isFavorite
-        ? favoriteRecipes.filter((fav) => fav.uri !== recipe.uri)
-        : [...favoriteRecipes, recipe];
-
-      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-      setIsFavorite(!isFavorite);
+      if (isFavorite) {
+        const updatedFavorites = favoriteRecipes.filter(
+          (fav) => fav.uri !== recipe.uri
+        );
+        await AsyncStorage.setItem(
+          "favorites",
+          JSON.stringify(updatedFavorites)
+        );
+        setIsFavorite(false);
+      } else {
+        favoriteRecipes.push(recipe);
+        await AsyncStorage.setItem(
+          "favorites",
+          JSON.stringify(favoriteRecipes)
+        );
+        setIsFavorite(true);
+      }
     } catch (error) {
-      console.error("Failed to toggle favorite:", error);
+      console.error(error);
     }
   };
 
@@ -47,14 +58,14 @@ const RecipeDetailScreen = ({ route }) => {
     if (recipe.url) {
       Linking.openURL(recipe.url);
     } else {
-      console.error("Recipe URL not available");
+      console.error("URL não disponível");
     }
   };
 
   if (!recipe) {
     return (
       <View style={styles.container}>
-        <Text>Recipe not found :&#40;</Text>
+        <Text>Receita não encontrada :&#40;</Text>
       </View>
     );
   }
@@ -67,24 +78,23 @@ const RecipeDetailScreen = ({ route }) => {
           <Text style={styles.title}>{recipe.label}</Text>
           {recipe.cuisineType && (
             <Text style={styles.info}>
-              Cuisine: {recipe.cuisineType.join(", ")}
+              Cozinha: {recipe.cuisineType.join(", ")}
             </Text>
           )}
           {recipe.calories && (
             <Text style={styles.info}>
-              Calories: {Math.round(recipe.calories)}
+              Calorias: {Math.round(recipe.calories)}
             </Text>
           )}
           {recipe.ingredientLines && (
             <Text style={styles.info}>
-              Ingredients: {recipe.ingredientLines.length}
+              Ingredientes: {recipe.ingredientLines.length}
             </Text>
           )}
         </View>
       </View>
-
       <View style={styles.ingredientsContainer}>
-        <Text style={styles.subtitle}>Ingredients:</Text>
+        <Text style={styles.subtitle}>Ingredientes:</Text>
         {recipe.ingredientLines.map((ingredient, index) => (
           <Text key={index} style={styles.ingredient}>
             {ingredient}
@@ -92,19 +102,21 @@ const RecipeDetailScreen = ({ route }) => {
         ))}
       </View>
 
-      <View style={styles.buttonContainer}>
+      <View style={styles.favoritesButtonContainer}>
         <TouchableOpacity
           onPress={toggleFavorite}
           style={[
             styles.favoriteButton,
-            isFavorite && styles.favoriteButtonActive,
+            isFavorite ? styles.favoriteButtonActive : {},
           ]}
         >
           <Text style={styles.buttonText}>
             {isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
           </Text>
         </TouchableOpacity>
+      </View>
 
+      <View style={styles.viewRecipeButtonContainer}>
         <TouchableOpacity
           onPress={openRecipeUrl}
           style={styles.viewRecipeButton}
@@ -165,7 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     color: "#333",
   },
-  buttonContainer: {
+  favoritesButtonContainer: {
     marginTop: 24,
   },
   favoriteButton: {
@@ -177,18 +189,20 @@ const styles = StyleSheet.create({
   favoriteButtonActive: {
     backgroundColor: "#941C2F",
   },
-  viewRecipeButton: {
-    backgroundColor: "#296EB4",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 999,
-    marginTop: 16,
-  },
   buttonText: {
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
     fontWeight: "bold",
+  },
+  viewRecipeButtonContainer: {
+    marginTop: 16,
+  },
+  viewRecipeButton: {
+    backgroundColor: "#296EB4",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
   },
 });
 
