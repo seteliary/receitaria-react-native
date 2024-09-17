@@ -198,11 +198,19 @@ const SearchResultsScreen = ({ route, navigation }) => {
       )}
 
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
+        <View style={styles.modalContainer} onPress={closeFilterModal}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Filtros de busca</Text>
-
-            <ScrollView style={styles.modalScrollView}>
+            <View style={styles.modalContentHeader}>
+              <Text style={styles.modalTitle}>Filtros de busca</Text>
+              <Ionicons
+                name="close-circle-outline"
+                size={32}
+                color="#333"
+                onPress={closeFilterModal}
+                style={styles.closeIcon}
+              />
+            </View>
+            <ScrollView>
               <Text style={styles.filterLabel}>Restrições:</Text>
               {healthFilterOptions.map((filter) => (
                 <View key={filter} style={styles.checkboxContainer}>
@@ -252,7 +260,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 16,
     backgroundColor: "#fff",
     borderRadius: 999,
     paddingHorizontal: 8,
@@ -260,6 +268,8 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     padding: 12,
+    color: "#b0b0b0",
+    fontSize: 16,
   },
   searchIcon: {
     padding: 10,
@@ -293,21 +303,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginHorizontal: 20,
     borderRadius: 16,
-    maxHeight: "70%",
-    width: "60%",
+    maxHeight: "80%",
+    width: "80%",
   },
-  modalScrollView: {
-    // maxHeight: "70%",
+  modalContentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: "bold",
     padding: 20,
+    color: "#333",
+  },
+  closeIcon: {
+    padding: 20,
   },
   filterLabel: {
-    fontSize: 16,
-    marginVertical: 10,
+    fontSize: 18,
+    marginBottom: 12,
     paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: "#ffb703",
+    color: "#fff",
+    fontWeight: "bold",
   },
   checkboxContainer: {
     flexDirection: "row",
