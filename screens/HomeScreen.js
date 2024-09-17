@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -13,71 +13,63 @@ import { fetchRecipes } from "../api";
 import RecipeCard from "../components/RecipeCard";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+// Constants
+const HEALTH_FILTERS = {
+  vegan: "Vegano",
+  vegetarian: "Vegetariano",
+  "dairy-free": "Sem derivados de leite",
+  DASH: "Dieta DASH",
+  "gluten-free": "Sem glúten",
+  paleo: "Dieta Paleo",
+  "peanut-free": "Sem amendoim",
+  "soy-free": "Sem soja",
+};
+
+const CUISINE_TYPE_OPTIONS = [
+  "American",
+  "Asian",
+  "Caribbean",
+  "Chinese",
+  "French",
+  "Indian",
+  "Italian",
+  "Japanese",
+  "Kosher",
+  "Mediterranean",
+  "Mexican",
+  "Nordic",
+  "South American",
+];
+
+const CUISINE_TYPE_LABELS = {
+  American: "Americana",
+  Asian: "Asiática",
+  Caribbean: "Caribenha",
+  Chinese: "Chinesa",
+  French: "Francesa",
+  Indian: "Indiana",
+  Italian: "Italiana",
+  Japanese: "Japonesa",
+  Kosher: "Kosher",
+  Mediterranean: "Mediterrânea",
+  Mexican: "Mexicana",
+  Nordic: "Nórdica",
+  "South American": "Sul-americana",
+};
+
 const HomeScreen = ({ navigation }) => {
   const [featuredRecipes, setFeaturedRecipes] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
   const [query, setQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [healthFilters, setHealthFilters] = useState({
-    vegan: false,
-    vegetarian: false,
-    "dairy-free": false,
-    DASH: false,
-    "gluten-free": false,
-    paleo: false,
-    "peanut-free": false,
-    "soy-free": false,
-  });
-
-  const healthFilterLabels = {
-    vegan: "Vegano",
-    vegetarian: "Vegetariano",
-    "dairy-free": "Sem derivados de leite",
-    DASH: "Dieta DASH",
-    "gluten-free": "Sem glúten",
-    paleo: "Dieta Paleo",
-    "peanut-free": "Sem amendoim",
-    "soy-free": "Sem soja",
-  };
-
-  const cuisineTypeOptions = [
-    "American",
-    "Asian",
-    "Caribbean",
-    "Chinese",
-    "French",
-    "Indian",
-    "Italian",
-    "Japanese",
-    "Kosher",
-    "Mediterranean",
-    "Mexican",
-    "Nordic",
-    "South American",
-  ];
-
-  const cuisineTypeLabels = {
-    American: "Americana",
-    Asian: "Asiática",
-    Caribbean: "Caribenha",
-    Chinese: "Chinesa",
-    French: "Francesa",
-    Indian: "Indiana",
-    Italian: "Italiana",
-    Japanese: "Japonesa",
-    Kosher: "Kosher",
-    Mediterranean: "Mediterrânea",
-    Mexican: "Mexicana",
-    Nordic: "Nórdica",
-    "South American": "Sul-americana",
-  };
-
-  const [cuisineTypeFilters, setCuisineTypeFilters] = useState(
-    cuisineTypeOptions.reduce(
-      (filters, type) => ({ ...filters, [type]: false }),
+  const [healthFilters, setHealthFilters] = useState(
+    Object.keys(HEALTH_FILTERS).reduce(
+      (acc, filter) => ({ ...acc, [filter]: false }),
       {}
     )
+  );
+  const [cuisineTypeFilters, setCuisineTypeFilters] = useState(
+    CUISINE_TYPE_OPTIONS.reduce((acc, type) => ({ ...acc, [type]: false }), {})
   );
 
   useEffect(() => {
@@ -99,24 +91,22 @@ const HomeScreen = ({ navigation }) => {
     loadFeaturedRecipes();
   }, []);
 
-  const toggleHealthFilter = (filter) => {
-    setHealthFilters({ ...healthFilters, [filter]: !healthFilters[filter] });
-  };
+  const toggleFilter = useCallback((type, filter) => {
+    if (type === "health") {
+      setHealthFilters((prevFilters) => ({
+        ...prevFilters,
+        [filter]: !prevFilters[filter],
+      }));
+    } else if (type === "cuisine") {
+      setCuisineTypeFilters((prevFilters) => ({
+        ...prevFilters,
+        [filter]: !prevFilters[filter],
+      }));
+    }
+  }, []);
 
-  const toggleCuisineTypeFilter = (filter) => {
-    setCuisineTypeFilters({
-      ...cuisineTypeFilters,
-      [filter]: !cuisineTypeFilters[filter],
-    });
-  };
-
-  const openFilterModal = () => {
-    setModalVisible(true);
-  };
-
-  const closeFilterModal = () => {
-    setModalVisible(false);
-  };
+  const openFilterModal = () => setModalVisible(true);
+  const closeFilterModal = () => setModalVisible(false);
 
   const handleSearch = () => {
     navigation.navigate("SearchResults", {
@@ -197,27 +187,27 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <ScrollView>
               <Text style={styles.filterLabel}>Restrições:</Text>
-              {Object.keys(healthFilters).map((filter) => (
+              {Object.keys(HEALTH_FILTERS).map((filter) => (
                 <View key={filter} style={styles.checkboxContainer}>
                   <CheckBox
                     value={healthFilters[filter]}
-                    onValueChange={() => toggleHealthFilter(filter)}
+                    onValueChange={() => toggleFilter("health", filter)}
                   />
                   <Text style={styles.filterText}>
-                    {healthFilterLabels[filter] || filter}
+                    {HEALTH_FILTERS[filter]}
                   </Text>
                 </View>
               ))}
 
               <Text style={styles.filterLabel}>Culinária:</Text>
-              {cuisineTypeOptions.map((type) => (
+              {CUISINE_TYPE_OPTIONS.map((type) => (
                 <View key={type} style={styles.checkboxContainer}>
                   <CheckBox
                     value={cuisineTypeFilters[type]}
-                    onValueChange={() => toggleCuisineTypeFilter(type)}
+                    onValueChange={() => toggleFilter("cuisine", type)}
                   />
                   <Text style={styles.filterText}>
-                    {cuisineTypeLabels[type] || type}
+                    {CUISINE_TYPE_LABELS[type] || type}
                   </Text>
                 </View>
               ))}

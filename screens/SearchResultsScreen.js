@@ -13,6 +13,60 @@ import { fetchRecipes } from "../api";
 import RecipeCard from "../components/RecipeCard";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+const healthFilterOptions = [
+  "vegan",
+  "vegetarian",
+  "dairy-free",
+  "DASH",
+  "gluten-free",
+  "paleo",
+  "peanut-free",
+  "soy-free",
+];
+
+const healthFilterLabels = {
+  vegan: "Vegano",
+  vegetarian: "Vegetariano",
+  "dairy-free": "Sem derivados de leite",
+  DASH: "Dieta DASH",
+  "gluten-free": "Sem glúten",
+  paleo: "Dieta Paleo",
+  "peanut-free": "Sem amendoim",
+  "soy-free": "Sem soja",
+};
+
+const cuisineTypeOptions = [
+  "American",
+  "Asian",
+  "Caribbean",
+  "Chinese",
+  "French",
+  "Indian",
+  "Italian",
+  "Japanese",
+  "Kosher",
+  "Mediterranean",
+  "Mexican",
+  "Nordic",
+  "South American",
+];
+
+const cuisineTypeLabels = {
+  American: "Americana",
+  Asian: "Asiática",
+  Caribbean: "Caribenha",
+  Chinese: "Chinesa",
+  French: "Francesa",
+  Indian: "Indiana",
+  Italian: "Italiana",
+  Japanese: "Japonesa",
+  Kosher: "Kosher",
+  Mediterranean: "Mediterrânea",
+  Mexican: "Mexicana",
+  Nordic: "Nórdica",
+  "South American": "Sul-americana",
+};
+
 const SearchResultsScreen = ({ route, navigation }) => {
   const { query, healthFilters, cuisineTypeFilters } = route.params;
   const [recipes, setRecipes] = useState([]);
@@ -25,60 +79,6 @@ const SearchResultsScreen = ({ route, navigation }) => {
   const [currentCuisineTypeFilters, setCurrentCuisineTypeFilters] = useState(
     cuisineTypeFilters.reduce((acc, filter) => ({ ...acc, [filter]: true }), {})
   );
-
-  const healthFilterOptions = [
-    "vegan",
-    "vegetarian",
-    "dairy-free",
-    "DASH",
-    "gluten-free",
-    "paleo",
-    "peanut-free",
-    "soy-free",
-  ];
-
-  const healthFilterLabels = {
-    vegan: "Vegano",
-    vegetarian: "Vegetariano",
-    "dairy-free": "Sem derivados de leite",
-    DASH: "Dieta DASH",
-    "gluten-free": "Sem glúten",
-    paleo: "Dieta Paleo",
-    "peanut-free": "Sem amendoim",
-    "soy-free": "Sem soja",
-  };
-
-  const cuisineTypeOptions = [
-    "American",
-    "Asian",
-    "Caribbean",
-    "Chinese",
-    "French",
-    "Indian",
-    "Italian",
-    "Japanese",
-    "Kosher",
-    "Mediterranean",
-    "Mexican",
-    "Nordic",
-    "South American",
-  ];
-
-  const cuisineTypeLabels = {
-    American: "Americana",
-    Asian: "Asiática",
-    Caribbean: "Caribenha",
-    Chinese: "Chinesa",
-    French: "Francesa",
-    Indian: "Indiana",
-    Italian: "Italiana",
-    Japanese: "Japonesa",
-    Kosher: "Kosher",
-    Mediterranean: "Mediterrânea",
-    Mexican: "Mexicana",
-    Nordic: "Nórdica",
-    "South American": "Sul-americana",
-  };
 
   useEffect(() => {
     const searchRecipes = async () => {
@@ -110,13 +110,8 @@ const SearchResultsScreen = ({ route, navigation }) => {
     setSearchQuery(searchQuery);
   };
 
-  const openFilterModal = () => {
-    setModalVisible(true);
-  };
-
-  const closeFilterModal = () => {
-    setModalVisible(false);
-  };
+  const openFilterModal = () => setModalVisible(true);
+  const closeFilterModal = () => setModalVisible(false);
 
   const toggleHealthFilter = (filter) => {
     setCurrentHealthFilters((prevState) => ({
@@ -132,7 +127,6 @@ const SearchResultsScreen = ({ route, navigation }) => {
     }));
   };
 
-  // Generate text for applied filters
   const appliedFilters = [
     ...Object.keys(currentHealthFilters).filter(
       (filter) => currentHealthFilters[filter]
@@ -198,7 +192,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
       )}
 
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer} onPress={closeFilterModal}>
+        <View style={styles.modalContainer} onTouchStart={closeFilterModal}>
           <View style={styles.modalContent}>
             <View style={styles.modalContentHeader}>
               <Text style={styles.modalTitle}>Filtros de busca</Text>
