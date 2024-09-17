@@ -5,12 +5,12 @@ import {
   Image,
   ScrollView,
   StyleSheet,
-  Button,
+  TouchableOpacity,
+  Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
-const RecipeDetailScreen = ({ route, navigation }) => {
+const RecipeDetailScreen = ({ route }) => {
   const { recipe } = route.params;
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -54,6 +54,14 @@ const RecipeDetailScreen = ({ route, navigation }) => {
     }
   };
 
+  const openRecipeUrl = () => {
+    if (recipe.url) {
+      Linking.openURL(recipe.url);
+    } else {
+      console.error("URL não disponível");
+    }
+  };
+
   if (!recipe) {
     return (
       <View style={styles.container}>
@@ -70,35 +78,52 @@ const RecipeDetailScreen = ({ route, navigation }) => {
           <Text style={styles.title}>{recipe.label}</Text>
           {recipe.cuisineType && (
             <Text style={styles.info}>
-              Cuisine: {recipe.cuisineType.join(", ")}
+              Cozinha: {recipe.cuisineType.join(", ")}
             </Text>
           )}
           {recipe.calories && (
             <Text style={styles.info}>
-              Calories: {Math.round(recipe.calories)}
+              Calorias: {Math.round(recipe.calories)}
             </Text>
           )}
           {recipe.ingredientLines && (
             <Text style={styles.info}>
-              Ingredients: {recipe.ingredientLines.length}
+              Ingredientes: {recipe.ingredientLines.length}
             </Text>
           )}
         </View>
       </View>
       <View style={styles.ingredientsContainer}>
-        <Text style={styles.subtitle}>Ingredients:</Text>
+        <Text style={styles.subtitle}>Ingredientes:</Text>
         {recipe.ingredientLines.map((ingredient, index) => (
           <Text key={index} style={styles.ingredient}>
             {ingredient}
           </Text>
         ))}
       </View>
+
       <View style={styles.favoritesButtonContainer}>
-        <Button
-          title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        <TouchableOpacity
           onPress={toggleFavorite}
-          color="#fb7d00"
-        />
+          style={[
+            styles.favoriteButton,
+            isFavorite ? styles.favoriteButtonActive : {},
+          ]}
+        >
+          <Text style={styles.buttonText}>
+            {isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Botão para ver o modo de preparo */}
+      <View style={styles.viewRecipeButtonContainer}>
+        <TouchableOpacity
+          onPress={openRecipeUrl}
+          style={styles.viewRecipeButton}
+        >
+          <Text style={styles.buttonText}>Ver modo de preparo</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -107,12 +132,15 @@ const RecipeDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 24,
     backgroundColor: "#ffb703",
   },
   recipeHeader: {
     flexDirection: "row",
     marginBottom: 24,
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 16,
   },
   image: {
     width: 200,
@@ -120,27 +148,30 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   recipeDetails: {
-    marginLeft: 16,
-    justifyContent: "center",
+    marginLeft: 32,
     flex: 1,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#3a3b3c",
   },
   info: {
     fontSize: 16,
     marginBottom: 4,
-    color: "#666",
+    color: "#333",
   },
   ingredientsContainer: {
-    marginTop: 16,
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 16,
   },
   subtitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 8,
+    color: "#3a3b3c",
   },
   ingredient: {
     fontSize: 16,
@@ -148,8 +179,31 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   favoritesButtonContainer: {
-    alignItems: "center",
-    marginTop: 20,
+    marginTop: 24,
+  },
+  favoriteButton: {
+    backgroundColor: "#fb7d00",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
+  },
+  favoriteButtonActive: {
+    backgroundColor: "#e74c3c",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  viewRecipeButtonContainer: {
+    marginTop: 16,
+  },
+  viewRecipeButton: {
+    backgroundColor: "#fb7d00",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 999,
   },
 });
 

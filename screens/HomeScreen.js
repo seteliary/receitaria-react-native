@@ -71,35 +71,35 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 24,
     backgroundColor: "#ffb703", // Cor de fundo das páginas
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
     marginBottom: 10,
-    backgroundColor: "#fff", // Fundo branco para a barra de pesquisa
-    borderRadius: 5,
-    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    borderRadius: 999,
+    paddingHorizontal: 8,
   },
   searchInput: {
     flex: 1,
-    padding: 10,
+    padding: 12,
   },
   searchIcon: {
     padding: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
     marginVertical: 10,
+    marginBottom: 24,
+    color: "#fff",
   },
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 24,
   },
 });
 

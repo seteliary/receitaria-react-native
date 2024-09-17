@@ -18,9 +18,8 @@ const RecipeCard = ({ recipe, onPress }) => {
 
 const styles = StyleSheet.create({
   card: {
-    width: 250,
+    width: 220,
     height: 185,
-    margin: 8,
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 3,
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
-    color: "#000",
+    color: "#333",
   },
 });
 

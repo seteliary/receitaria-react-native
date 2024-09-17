@@ -17,7 +17,7 @@ const SearchResultsScreen = ({ route, navigation }) => {
         const data = await fetchRecipes(searchQuery);
         setRecipes(data.hits);
       } catch (error) {
-        console.error("Error fetching recipes:", error);
+        console.error("Erro:", error);
       } finally {
         setLoading(false);
       }
@@ -47,9 +47,10 @@ const SearchResultsScreen = ({ route, navigation }) => {
           onPress={handleSearch}
         />
       </View>
+      <Text style={styles.title}>Resultados da busca</Text>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {loading ? (
-          <Text>Loading...</Text>
+          <Text>Carregando...</Text>
         ) : (
           recipes.map((item) => (
             <RecipeCard
@@ -69,17 +70,21 @@ const SearchResultsScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: "#ffb703", // Cor de fundo das páginas
+    padding: 24,
+    backgroundColor: "#ffb703",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 24,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "gray",
-    marginBottom: 10,
-    backgroundColor: "#fff", // Fundo branco para a barra de pesquisa
-    borderRadius: 5,
+    marginBottom: 24,
+    backgroundColor: "#fff",
+    borderRadius: 999,
     paddingHorizontal: 10,
   },
   searchInput: {
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 24,
   },
 });
 

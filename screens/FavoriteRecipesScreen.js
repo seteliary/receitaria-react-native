@@ -59,13 +59,14 @@ const FavoriteRecipesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
     backgroundColor: "#ffb703", // Fundo da página
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 16,
   },
   title: {
     flex: 1,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
   cardsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    gap: 24,
   },
 });
 
