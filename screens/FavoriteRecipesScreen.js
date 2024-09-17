@@ -38,7 +38,7 @@ const FavoriteRecipesScreen = ({ navigation }) => {
           onPress={() => navigation.navigate("Favorites")}
           style={styles.favoritesButton}
         />
-        <Text style={styles.title}>Receitas Favoritas</Text>
+        <Text style={styles.title}>Minhas receitas favoritas</Text>
       </View>
       <ScrollView contentContainerStyle={styles.cardsContainer}>
         {favoriteRecipes.map((item) => (
