@@ -40,17 +40,25 @@ const FavoriteRecipesScreen = ({ navigation }) => {
         />
         <Text style={styles.title}>Minhas receitas favoritas</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.cardsContainer}>
-        {favoriteRecipes.map((item) => (
-          <RecipeCard
-            key={item.uri}
-            recipe={item}
-            onPress={() =>
-              navigation.navigate("RecipeDetail", { recipe: item })
-            }
-          />
-        ))}
-      </ScrollView>
+
+      {/* Verifica se não há receitas favoritas */}
+      {favoriteRecipes.length === 0 ? (
+        <Text style={styles.emptyMessageText}>
+          Você ainda não possui receitas favoritas! :&#40;
+        </Text>
+      ) : (
+        <ScrollView contentContainerStyle={styles.cardsContainer}>
+          {favoriteRecipes.map((item) => (
+            <RecipeCard
+              key={item.uri}
+              recipe={item}
+              onPress={() =>
+                navigation.navigate("RecipeDetail", { recipe: item })
+              }
+            />
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
@@ -81,6 +89,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 24,
+  },
+  emptyMessageText: {
+    fontSize: 20,
+    color: "#333",
   },
 });
 
